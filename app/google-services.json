@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "583949209331",
+    "firebase_url": "https://beactive-49f90.firebaseio.com",
+    "project_id": "beactive-49f90",
+    "storage_bucket": "beactive-49f90.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583949209331:android:137685da54def1d3",
+        "android_client_info": {
+          "package_name": "com.marefx.marko.beactive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583949209331-e0pommnttuasv2il4lks844fdf8a9oep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOXr9ySFDDkTO9KqFKAdbLi29hwl9koK4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
