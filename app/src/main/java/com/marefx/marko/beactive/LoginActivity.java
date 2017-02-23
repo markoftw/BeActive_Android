@@ -1,10 +1,7 @@
 package com.marefx.marko.beactive;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -43,7 +40,6 @@ import okhttp3.RequestBody;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static String JWTToken = null;
     private static final int RESULT_PERMS_INITIAL = 1339;
 
     private static final String[] PERMS_ALL = {
@@ -66,17 +62,17 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
 
         // CHECK IF TOKEN EXISTS
-        getToken();
+        DataService.getToken(LoginActivity.this);
 
-        Log.e("token2", JWTToken);
+        Log.e("token2", DataService.JWTToken);
 
-        if(JWTToken != null && JWTToken.length() > 0) {
+        if(DataService.JWTToken != null && DataService.JWTToken.length() > 0) {
             RequestBody formBody = new FormBody.Builder()
                     .build();
 
             final okhttp3.Request request = new okhttp3.Request.Builder()
-                    .addHeader("Authorization", "Bearer " + JWTToken)
-                    .url(UserActivity.SERVER_ADDRESS + "/api/user/login/user")
+                    .addHeader("Authorization", "Bearer " + DataService.JWTToken)
+                    .url(DataService.SERVER_ADDRESS + "/api/user/login/user")
                     .post(formBody)
                     .build();
 
@@ -104,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                                     public void run() {
                                         LoginActivity.this.runOnUiThread(new Runnable() {
                                             public void run() {
-                                                Toast.makeText(LoginActivity.this, "Token valid, logged in", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(LoginActivity.this, "Uspešna prijava", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
@@ -120,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void run() {
                                 LoginActivity.this.runOnUiThread(new Runnable() {
                                     public void run() {
-                                        Toast.makeText(LoginActivity.this, "Token expired, sign in", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, "Ponovno se prijavite", Toast.LENGTH_SHORT).show();
                                         progressDialog.hide();
                                     }
                                 });
@@ -132,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-        if (isFirstRun().equals("TRUE")) {
+        if (DataService.isFirstRun(LoginActivity.this).equals("TRUE")) {
             ActivityCompat.requestPermissions(this, PERMS_ALL, RESULT_PERMS_INITIAL);
         }
 
@@ -148,10 +144,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(user.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Vnesite e-poštni naslov", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 if(pass.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Vnesite geslo", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 final List<Pair<String, String>> params = new ArrayList<Pair<String, String>>() {{
@@ -160,10 +158,11 @@ public class LoginActivity extends AppCompatActivity {
                 }};
                 progressDialog.setMessage("Poteka prijava...");
                 progressDialog.show();
-                Fuel.post("http://beactive.marefx.com/api/user/login/", params).responseString(new Handler<String>() {
+                Fuel.post(DataService.SERVER_ADDRESS + "/api/user/login/", params).responseString(new Handler<String>() {
                     @Override
                     public void failure(@NonNull Request request, @NonNull Response response, @NonNull FuelError error) {
                         Toast.makeText(LoginActivity.this, "Napaka " + error, Toast.LENGTH_SHORT).show();
+                        progressDialog.hide();
                     }
 
                     @Override
@@ -175,11 +174,12 @@ public class LoginActivity extends AppCompatActivity {
                             if (success) {
                                 Toast.makeText(LoginActivity.this, "Uspešno prijavljeni!", Toast.LENGTH_SHORT).show();
                                 String name = jsonResponse.getString("username");
+                                DataService.saveUsername(LoginActivity.this, name);
 
                                 Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-                                intent.putExtra("username", name);
-                                JWTToken = jsonResponse.getString("token");
-                                LoginActivity.this.saveToken();
+                                //intent.putExtra("username", name);
+                                String token = jsonResponse.getString("token");
+                                DataService.saveToken(LoginActivity.this, token);
                                 LoginActivity.this.startActivity(intent);
                             } else {
                                 Toast.makeText(LoginActivity.this, "Neuspešna prijava, poskusite ponovno!", Toast.LENGTH_SHORT).show();
@@ -202,27 +202,4 @@ public class LoginActivity extends AppCompatActivity {
         // OR AUTHORIZE AGAIN
     }
 
-    public void saveToken() {
-        SharedPreferences pref = getSharedPreferences("userToken", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("token", JWTToken);
-        editor.apply();
-    }
-
-    public void getToken() {
-        SharedPreferences pref = getSharedPreferences("userToken", Context.MODE_PRIVATE);
-        JWTToken = pref.getString("token", "");
-    }
-
-    private String isFirstRun() {
-        SharedPreferences pref = getSharedPreferences("userFirstRun", Context.MODE_PRIVATE);
-        String result = pref.getString("firstRun", "");
-        if (result.equals("FALSE")) {
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("firstRun", "FALSE");
-            editor.apply();
-            return "FALSE";
-        }
-        return "TRUE";
-    }
 }

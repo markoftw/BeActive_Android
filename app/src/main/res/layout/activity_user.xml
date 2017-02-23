@@ -11,18 +11,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.marefx.marko.beactive.UserActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/prijavljenKot"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <Button
-        android:text="UPLOAD FROM GALLERY"
+        android:text="Naloži iz galerije"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -34,25 +24,33 @@
         android:layout_alignParentEnd="true"
         tools:ignore="HardcodedText" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/prijavljenKot"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center" />
+
     <Button
-        android:text="TAKE PHOTO"
+        android:text="Slikaj &amp; naloži"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buttonTakephoto"
         tools:ignore="HardcodedText"
         android:layout_above="@+id/buttonUploadphoto"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/prijavljenKot"
+        android:layout_alignParentStart="true" />
 
     <Button
-        android:text="Test Notification"
+        android:text="Pregled slik &amp; naslovov"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/prijavljenKot"
+        android:id="@+id/buttonReviews"
+        android:layout_above="@+id/buttonTakephoto"
         android:layout_alignParentStart="true"
-        android:id="@+id/notifyButton"
         android:layout_alignParentEnd="true" />
 
     <ImageView
@@ -62,24 +60,8 @@
         android:id="@+id/imageToUpload"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:layout_below="@+id/notifyButton"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:text="VIEW REVIEWS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/uploadImageName"
-        android:layout_alignParentStart="true"
-        android:id="@+id/buttonReviews"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/uploadImageName"
-        android:layout_above="@+id/buttonTakephoto"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/prijavljenKot"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp" />
 
 </RelativeLayout>

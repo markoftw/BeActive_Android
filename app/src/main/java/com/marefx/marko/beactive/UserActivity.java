@@ -1,6 +1,5 @@
 package com.marefx.marko.beactive;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build.VERSION;
@@ -31,9 +29,6 @@ import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,19 +54,14 @@ public class UserActivity extends AppCompatActivity {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_PICK_PHOTO = 2;
-    public static final String SERVER_ADDRESS = "http://beactive.marefx.com";
-
     public static String DeviceToken;
-
-
     NotificationCompat.Builder notification;
     private static final int uniqID = 54416;
 
     TextView welcomeMsg;
-    TextView uploadImgName;
     Button cameraButton;
     Button uploadButton;
-    Button notifButton;
+    //Button notifButton;
     Button buttonReview;
     ImageView uploadImg;
 
@@ -89,22 +79,22 @@ public class UserActivity extends AppCompatActivity {
 
         FirebaseMessaging.getInstance().subscribeToTopic("test");
         DeviceToken = FirebaseInstanceId.getInstance().getToken();
+        DataService.getToken(UserActivity.this);
         checkIfSameToken();
 
         Log.e("CurrDeviceToken", "current device token: " + DeviceToken);
-        Log.e("CurrJWTToken", "current JWT token: " + LoginActivity.JWTToken);
+        Log.e("CurrJWTToken", "current JWT token: " + DataService.JWTToken);
 
         cameraButton = (Button) findViewById(R.id.buttonTakephoto);
         uploadButton = (Button) findViewById(R.id.buttonUploadphoto);
-        notifButton = (Button) findViewById(R.id.notifyButton);
+        //notifButton = (Button) findViewById(R.id.notifyButton);
         buttonReview = (Button) findViewById(R.id.buttonReviews);
         welcomeMsg = (TextView) findViewById(R.id.prijavljenKot);
-        uploadImgName = (TextView) findViewById(R.id.uploadImageName);
         uploadImg = (ImageView) findViewById(R.id.imageToUpload);
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
-
-        welcomeMsg.setText("Prijavljeni kot " + username);
+        /*Intent intent = getIntent();
+        String username = intent.getStringExtra("username");*/
+        DataService.getUsername(UserActivity.this);
+        welcomeMsg.setText("Prijavljeni kot " + DataService.Username);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +119,7 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
         });
-        notifButton.setOnClickListener(new View.OnClickListener() {
+        /*notifButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v == notifButton) {
@@ -140,7 +130,7 @@ public class UserActivity extends AppCompatActivity {
                     }
                 }
             }
-        });
+        });*/
         buttonReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,8 +171,8 @@ public class UserActivity extends AppCompatActivity {
                     .build();
 
             Request request = new Request.Builder()
-                    .addHeader("Authorization", "Bearer " + LoginActivity.JWTToken)
-                    .url(UserActivity.SERVER_ADDRESS + "/api/user/register/device")
+                    .addHeader("Authorization", "Bearer " + DataService.JWTToken)
+                    .url(DataService.SERVER_ADDRESS + "/api/user/register/device")
                     .post(body)
                     .build();
 
@@ -287,16 +277,15 @@ public class UserActivity extends AppCompatActivity {
                         .addFormDataPart("name", name)
                         .addFormDataPart("image", encodedImage)
                         .build();
-
                 Request request = new Request.Builder()
-                        .addHeader("Authorization", "Bearer " + LoginActivity.JWTToken)
-                        .url(SERVER_ADDRESS + "/api/user/store/image")
+                        .addHeader("Authorization", "Bearer " + DataService.JWTToken)
+                        .url(DataService.SERVER_ADDRESS + "/api/user/store/image")
                         .post(req)
                         .build();
 
                 Response response = client.newCall(request).execute();
 
-                Log.d("token", "JWT:" + LoginActivity.JWTToken);
+                Log.d("token", "JWT:" + DataService.JWTToken);
                 Log.d("file", "test: " + new File(path).toString());
                 Log.d("response", "uploadImage: " + response.body().string());
             } catch (UnknownHostException | UnsupportedEncodingException e) {
@@ -310,7 +299,7 @@ public class UserActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Toast.makeText(getApplicationContext(), "Upload complete!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Slika uspešno naložena!", Toast.LENGTH_SHORT).show();
         }
     }
 

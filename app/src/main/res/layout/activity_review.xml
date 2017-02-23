@@ -12,7 +12,7 @@
     tools:context="com.marefx.marko.beactive.ReviewActivity">
 
     <TextView
-        android:text="No pending reviews"
+        android:text="Ni čakajočih slik za odobritev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewTItle"
@@ -34,7 +34,6 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_action_name"
         android:id="@+id/imageViewBody"
         android:layout_below="@+id/textViewImageTitle"
         android:layout_alignParentStart="true"
@@ -43,7 +42,7 @@
         android:layout_above="@+id/buttonReviewConfirm" />
 
     <Button
-        android:text="Review"
+        android:text="Oceni"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

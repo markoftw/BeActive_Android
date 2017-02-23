@@ -31,10 +31,10 @@ public class FirebaseMessagingIDService extends FirebaseInstanceIdService {
         RequestBody body = new FormBody.Builder()
                 .add("device_token", token)
                 .build();
-
+        DataService.getToken(FirebaseMessagingIDService.this);
         Request request = new Request.Builder()
-                .addHeader("Authorization", "Bearer " + LoginActivity.JWTToken)
-                .url(UserActivity.SERVER_ADDRESS + "/api/user/register/device")
+                .addHeader("Authorization", "Bearer " + DataService.JWTToken)
+                .url(DataService.SERVER_ADDRESS + "/api/user/register/device")
                 .post(body)
                 .build();
 
