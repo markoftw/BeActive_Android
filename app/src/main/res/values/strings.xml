@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">BeActive</string>
+    <string name="settings">Settings</string>
+    <string name="izpis">Logout</string>
+    <string name="exit">Exit</string>
+    <string name="pregled_slik_amp_naslovov"><![CDATA[Pregled slik & naslovov]]></string>
+    <string name="ni_akajo_ih_slik_za_odobritev">Ni čakajočih slik za odobritev</string>
+    <string name="oceni">Oceni</string>
 </resources>

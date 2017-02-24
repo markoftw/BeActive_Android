@@ -3,6 +3,8 @@ package com.marefx.marko.beactive;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Button;
@@ -165,6 +167,29 @@ class DataService {
                         Log.e("err", "error");
                     }
                 });
+    }
+
+    public static boolean isNetworkAvailable(Context context)
+    {
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivity != null)
+        {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+
+            if (info != null)
+            {
+                for (int i = 0; i < info.length; i++)
+                {
+                    Log.i("Class", info[i].getState().toString());
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     static String isFirstRun(Context context) {

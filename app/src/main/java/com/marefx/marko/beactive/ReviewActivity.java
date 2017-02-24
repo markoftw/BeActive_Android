@@ -1,12 +1,17 @@
 package com.marefx.marko.beactive;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,12 +41,35 @@ public class ReviewActivity extends AppCompatActivity {
     public ImageView imageBody;
     public Button btnReview;
     private String m_Text = "";
+    Toolbar toolbar;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int res_id = item.getItemId();
+        if(res_id == R.id.action_exit) {
+            Toast.makeText(getApplicationContext(), "You selected Exit", Toast.LENGTH_SHORT).show();
+        } else if(res_id == R.id.action_logout) {
+            Toast.makeText(getApplicationContext(), "You selected Logout", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
         Log.e("notifyCreated", "has been called");
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         DataService.getToken(this);
         title = (TextView) findViewById(R.id.textViewTItle);
         imageTitle = (TextView) findViewById(R.id.textViewImageTitle);

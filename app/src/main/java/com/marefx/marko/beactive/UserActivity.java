@@ -1,8 +1,11 @@
 package com.marefx.marko.beactive;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -19,10 +22,16 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +67,7 @@ public class UserActivity extends AppCompatActivity {
     NotificationCompat.Builder notification;
     private static final int uniqID = 54416;
 
+    Toolbar toolbar;
     TextView welcomeMsg;
     Button cameraButton;
     Button uploadButton;
@@ -66,13 +76,35 @@ public class UserActivity extends AppCompatActivity {
     ImageView uploadImg;
 
     String mCurrentPhotoPath;
+    private String m_Text = "";
 
     private final OkHttpClient client = new OkHttpClient();
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int res_id = item.getItemId();
+        if(res_id == R.id.action_exit) {
+            Toast.makeText(getApplicationContext(), "You selected Exit", Toast.LENGTH_SHORT).show();
+        } else if(res_id == R.id.action_logout) {
+            Toast.makeText(getApplicationContext(), "You selected Logout", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         notification = new NotificationCompat.Builder(this);
         notification.setAutoCancel(true);
@@ -239,19 +271,65 @@ public class UserActivity extends AppCompatActivity {
                         public void onScanCompleted(String path, Uri uri) {
                         }
                     });
-            String tempPath = getPath(imageUri);
+            final String tempPath = getPath(imageUri);
             uploadImg.setImageURI(imageUri);
-            Bitmap image = ((BitmapDrawable) uploadImg.getDrawable()).getBitmap();
-            new UploadImage(image, tempPath, tempPath).execute();
+            final Bitmap image = ((BitmapDrawable) uploadImg.getDrawable()).getBitmap();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
+            builder.setTitle("Vnesite opis slike");
+            final EditText input = new EditText(UserActivity.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("Pošlji", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(input.getText().length() > 0) {
+                        m_Text = input.getText().toString();
+                        new UploadImage(image, tempPath, tempPath, m_Text).execute();
+                    } else {
+                        Toast.makeText(UserActivity.this, "Opis slike je obvezen", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            builder.setNegativeButton("Prekliči", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+
         } else if (requestCode == REQUEST_PICK_PHOTO && resultCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
-            String tempPath = getPath(selectedImage);
+            final String tempPath = getPath(selectedImage);
             /*File f = new File(selectedImage.getPath());
             String selectedImageName = f.getName();
             uploadImgName.setText("Uploading path: " + tempPath);*/
             uploadImg.setImageURI(selectedImage);
-            Bitmap image = ((BitmapDrawable) uploadImg.getDrawable()).getBitmap();
-            new UploadImage(image, tempPath, tempPath).execute();
+            final Bitmap image = ((BitmapDrawable) uploadImg.getDrawable()).getBitmap();
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
+            builder.setTitle("Vnesite opis slike");
+            final EditText input = new EditText(UserActivity.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("Pošlji", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(input.getText().length() > 0) {
+                        m_Text = input.getText().toString();
+                        new UploadImage(image, tempPath, tempPath, m_Text).execute();
+                    } else {
+                        Toast.makeText(UserActivity.this, "Opis slike je obvezen", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            builder.setNegativeButton("Prekliči", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
         }
     }
 
@@ -259,10 +337,12 @@ public class UserActivity extends AppCompatActivity {
         Bitmap image;
         String name;
         String path;
-        public UploadImage(Bitmap image, String name, String path) {
+        String opis;
+        UploadImage(Bitmap image, String name, String path, String opis) {
             this.image = image;
             this.name = name;
             this.path = path;
+            this.opis = opis;
         }
         @Override
         protected Void doInBackground(Void... params) {
@@ -275,6 +355,7 @@ public class UserActivity extends AppCompatActivity {
                         .setType(MultipartBody.FORM)
                         //.addFormDataPart("image", "test.jpg", RequestBody.create(MediaType.parse("image/jpeg"), new File(path)))
                         .addFormDataPart("name", name)
+                        .addFormDataPart("opis", opis)
                         .addFormDataPart("image", encodedImage)
                         .build();
                 Request request = new Request.Builder()

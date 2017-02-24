@@ -1,11 +1,13 @@
 package com.marefx.marko.beactive;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -53,11 +55,30 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private final OkHttpClient client = new OkHttpClient();
+    Toolbar toolbar;
+    EditText email;
+    EditText password;
+    Button login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        email = (EditText) findViewById(R.id.userLogin);
+        password = (EditText) findViewById(R.id.userPassword);
+        login = (Button) findViewById(R.id.loginButton);
+
+        if(!DataService.isNetworkAvailable(LoginActivity.this)) {
+            email.setVisibility(View.GONE);
+            password.setVisibility(View.GONE);
+            login.setVisibility(View.GONE);
+            Toast.makeText(LoginActivity.this, "Ni povezave s internetom", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         progressDialog = new ProgressDialog(this);
 
@@ -131,10 +152,6 @@ public class LoginActivity extends AppCompatActivity {
         if (DataService.isFirstRun(LoginActivity.this).equals("TRUE")) {
             ActivityCompat.requestPermissions(this, PERMS_ALL, RESULT_PERMS_INITIAL);
         }
-
-        final EditText email = (EditText) findViewById(R.id.userLogin);
-        final EditText password = (EditText) findViewById(R.id.userPassword);
-        final Button login = (Button) findViewById(R.id.loginButton);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
