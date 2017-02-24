@@ -30,9 +30,10 @@ public class ReviewMessageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int res_id = item.getItemId();
         if(res_id == R.id.action_exit) {
-            Toast.makeText(getApplicationContext(), "You selected Exit", Toast.LENGTH_SHORT).show();
+            //this.finish();
+            DataService.exitApp(ReviewMessageActivity.this);
         } else if(res_id == R.id.action_logout) {
-            Toast.makeText(getApplicationContext(), "You selected Logout", Toast.LENGTH_SHORT).show();
+            DataService.logout(ReviewMessageActivity.this);
         }
         return true;
     }

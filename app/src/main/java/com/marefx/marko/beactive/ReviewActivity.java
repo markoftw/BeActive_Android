@@ -47,9 +47,10 @@ public class ReviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int res_id = item.getItemId();
         if(res_id == R.id.action_exit) {
-            Toast.makeText(getApplicationContext(), "You selected Exit", Toast.LENGTH_SHORT).show();
+            //this.finish();
+            DataService.exitApp(ReviewActivity.this);
         } else if(res_id == R.id.action_logout) {
-            Toast.makeText(getApplicationContext(), "You selected Logout", Toast.LENGTH_SHORT).show();
+            DataService.logout(ReviewActivity.this);
         }
         return true;
     }

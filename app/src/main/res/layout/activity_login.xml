@@ -11,17 +11,32 @@
         layout="@layout/toolbar"
         />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/userLogin"
+        android:hint="E-poštni naslov"
+        tools:ignore="HardcodedText"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="17dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
     <Button
         android:text="Prijava"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/loginButton"
         tools:ignore="HardcodedText,RtlHardcoded"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/userPassword"
-        android:layout_alignParentRight="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -32,20 +47,6 @@
         android:hint="Geslo"
         tools:ignore="HardcodedText"
         android:layout_below="@+id/userLogin"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/userLogin"
-        android:hint="E-poštni naslov"
-        tools:ignore="HardcodedText"
-        android:layout_below="@+id/toolbar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"

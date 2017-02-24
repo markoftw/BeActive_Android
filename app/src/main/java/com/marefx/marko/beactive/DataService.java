@@ -44,6 +44,7 @@ class ReviewList {
 
 class DataService {
     static String JWTToken = null;
+    static String DeviceToken = null;
     static String Username = null;
     static ArrayList<ReviewList> myList = new ArrayList<>();
     static String SERVER_ADDRESS = "http://beactive.marefx.com";
@@ -59,6 +60,45 @@ class DataService {
     static void getUsername(Context context) {
         SharedPreferences pref = context.getSharedPreferences("userName", Context.MODE_PRIVATE);
         Username = pref.getString("Username", "");
+    }
+
+    static void exitApp(Context context) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    static void logout(Context context) {
+        SharedPreferences prefName = context.getSharedPreferences("userName", Context.MODE_PRIVATE);
+        SharedPreferences prefToken = context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
+        SharedPreferences prefDeviceToken = context.getSharedPreferences("deviceToken", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editorName = prefName.edit();
+        SharedPreferences.Editor editorToken = prefToken.edit();
+        SharedPreferences.Editor editorDeviceToken = prefDeviceToken.edit();
+        editorName.remove("Username");
+        editorName.apply();
+        editorToken.remove("token");
+        editorToken.remove("token_device");
+        editorToken.apply();
+        editorDeviceToken.remove("token");
+        editorDeviceToken.apply();
+
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivity(intent);
+    }
+
+    static void saveDeviceToken(Context context, String token) {
+        DeviceToken = token;
+        SharedPreferences pref =  context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("token_device", token);
+        editor.apply();
+    }
+
+    static void getDeviceToken(Context context) {
+        SharedPreferences pref = context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
+        DeviceToken = pref.getString("token_device", "");
     }
 
     static void saveToken(Context context, String token) {
@@ -169,7 +209,7 @@ class DataService {
                 });
     }
 
-    public static boolean isNetworkAvailable(Context context)
+    static boolean isNetworkAvailable(Context context)
     {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
