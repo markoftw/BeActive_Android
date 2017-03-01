@@ -124,8 +124,8 @@ public class UserActivity extends AppCompatActivity {
         buttonReview = (Button) findViewById(R.id.buttonReviews);
         welcomeMsg = (TextView) findViewById(R.id.prijavljenKot);
         uploadImg = (ImageView) findViewById(R.id.imageToUpload);
-        /*Intent intent = getIntent();
-        String username = intent.getStringExtra("username");*/
+        //uploadImg.setVisibility(View.GONE);
+
         DataService.getUsername(UserActivity.this);
         welcomeMsg.setText("Prijavljeni kot " + DataService.Username);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -250,6 +250,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void dispatchUploadIntent() throws IOException {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, REQUEST_PICK_PHOTO);
     }
 
@@ -259,7 +260,7 @@ public class UserActivity extends AppCompatActivity {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             //Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
             // Show the thumbnail on ImageView
-            Log.e("errors" , "test3");
+            Log.e("errors", "test3");
             Uri imageUri = Uri.parse(mCurrentPhotoPath);
             File file = new File(imageUri.getPath());
             try {
@@ -286,7 +287,7 @@ public class UserActivity extends AppCompatActivity {
             builder.setPositiveButton("Pošlji", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(input.getText().length() > 0) {
+                    if (input.getText().length() > 0) {
                         m_Text = input.getText().toString();
                         new UploadImage(image, tempPath, tempPath, m_Text).execute();
                     } else {
@@ -302,14 +303,46 @@ public class UserActivity extends AppCompatActivity {
             });
             builder.show();
 
-        } else if (requestCode == REQUEST_PICK_PHOTO && resultCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            final String tempPath = getPath(selectedImage);
+        } else if (requestCode == REQUEST_PICK_PHOTO && resultCode == RESULT_OK && data != null && data.getData() != null) {
             /*File f = new File(selectedImage.getPath());
             String selectedImageName = f.getName();
             uploadImgName.setText("Uploading path: " + tempPath);*/
-            uploadImg.setImageURI(selectedImage);
-            final Bitmap image = ((BitmapDrawable) uploadImg.getDrawable()).getBitmap();
+
+            final Uri selectedImage = data.getData();
+            final Bitmap bitmap;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
+                builder.setTitle("Vnesite opis slike");
+                final EditText input = new EditText(UserActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+                builder.setPositiveButton("Pošlji", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(input.getText().length() > 0) {
+                            m_Text = input.getText().toString();
+                            String tempPath = getPath(selectedImage);
+                            new UploadImage(bitmap, tempPath, tempPath, m_Text).execute();
+                        } else {
+                            Toast.makeText(UserActivity.this, "Opis slike je obvezen", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Prekliči", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            /*final Uri selectedImage = data.getData();
             AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
             builder.setTitle("Vnesite opis slike");
             final EditText input = new EditText(UserActivity.this);
@@ -320,6 +353,10 @@ public class UserActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     if(input.getText().length() > 0) {
                         m_Text = input.getText().toString();
+                        //String tempPath = getPath(selectedImage);
+                        String tempPath = selectedImage.getPath();
+                        uploadImg.setImageURI(selectedImage);
+                        Bitmap image = ((BitmapDrawable) uploadImg.getDrawable()).getBitmap();
                         new UploadImage(image, tempPath, tempPath, m_Text).execute();
                     } else {
                         Toast.makeText(UserActivity.this, "Opis slike je obvezen", Toast.LENGTH_SHORT).show();
@@ -332,7 +369,7 @@ public class UserActivity extends AppCompatActivity {
                     dialog.cancel();
                 }
             });
-            builder.show();
+            builder.show();*/
         }
     }
 

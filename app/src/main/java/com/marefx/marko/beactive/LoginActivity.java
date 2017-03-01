@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private final OkHttpClient client = new OkHttpClient();
     Toolbar toolbar;
-    EditText email;
+    EditText username;
     EditText password;
     Button login;
 
@@ -68,12 +68,12 @@ public class LoginActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        email = (EditText) findViewById(R.id.userLogin);
+        username = (EditText) findViewById(R.id.userLogin);
         password = (EditText) findViewById(R.id.userPassword);
         login = (Button) findViewById(R.id.loginButton);
 
         if(!DataService.isNetworkAvailable(LoginActivity.this)) {
-            email.setVisibility(View.GONE);
+            username.setVisibility(View.GONE);
             password.setVisibility(View.GONE);
             login.setVisibility(View.GONE);
             Toast.makeText(LoginActivity.this, "Ni povezave s internetom", Toast.LENGTH_LONG).show();
@@ -156,11 +156,11 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String user = email.getText().toString();
+                final String user = username.getText().toString();
                 final String pass = password.getText().toString();
 
                 if(user.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Vnesite e-poštni naslov", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Vnesite uporabniško ime", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 final List<Pair<String, String>> params = new ArrayList<Pair<String, String>>() {{
-                    add(new Pair<>("email", user));
+                    add(new Pair<>("name", user));
                     add(new Pair<>("password", pass));
                 }};
                 progressDialog.setMessage("Poteka prijava...");
