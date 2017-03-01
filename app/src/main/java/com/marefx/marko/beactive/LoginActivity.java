@@ -1,6 +1,5 @@
 package com.marefx.marko.beactive;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,6 +18,7 @@ import com.github.kittinunf.fuel.core.FuelError;
 import com.github.kittinunf.fuel.core.Handler;
 import com.github.kittinunf.fuel.core.Request;
 import com.github.kittinunf.fuel.core.Response;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,13 +80,11 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        final String CurrentDeviceToken = FirebaseInstanceId.getInstance().getToken();
         progressDialog = new ProgressDialog(this);
-
         // CHECK IF TOKEN EXISTS
         DataService.getToken(LoginActivity.this);
-
         Log.e("token2", DataService.JWTToken);
-
         if(DataService.JWTToken != null && DataService.JWTToken.length() > 0) {
             RequestBody formBody = new FormBody.Builder()
                     .build();
@@ -114,8 +112,10 @@ public class LoginActivity extends AppCompatActivity {
                             boolean success = jsonResponse.has("success") ? jsonResponse.getBoolean("success") : false;
                             if (success) {
                                 String name = jsonResponse.getString("username");
+                                String ranking = jsonResponse.getString("status");
                                 Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-                                intent.putExtra("username", name);
+                                DataService.saveUsername(LoginActivity.this, name);
+                                DataService.saveDeviceType(LoginActivity.this, ranking);
 
                                 new Thread() {
                                     public void run() {
@@ -137,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void run() {
                                 LoginActivity.this.runOnUiThread(new Runnable() {
                                     public void run() {
+                                        DataService.logout(LoginActivity.this);
                                         Toast.makeText(LoginActivity.this, "Ponovno se prijavite", Toast.LENGTH_SHORT).show();
                                         progressDialog.hide();
                                     }
@@ -172,6 +173,7 @@ public class LoginActivity extends AppCompatActivity {
                 final List<Pair<String, String>> params = new ArrayList<Pair<String, String>>() {{
                     add(new Pair<>("name", user));
                     add(new Pair<>("password", pass));
+                    add(new Pair<>("device_token", CurrentDeviceToken));
                 }};
                 progressDialog.setMessage("Poteka prijava...");
                 progressDialog.show();
@@ -191,12 +193,15 @@ public class LoginActivity extends AppCompatActivity {
                             if (success) {
                                 Toast.makeText(LoginActivity.this, "Uspešno prijavljeni!", Toast.LENGTH_SHORT).show();
                                 String name = jsonResponse.getString("username");
+                                String ranking = jsonResponse.getString("status");
                                 DataService.saveUsername(LoginActivity.this, name);
+                                DataService.saveDeviceType(LoginActivity.this, ranking);
 
                                 Intent intent = new Intent(LoginActivity.this, UserActivity.class);
                                 //intent.putExtra("username", name);
                                 String token = jsonResponse.getString("token");
                                 DataService.saveToken(LoginActivity.this, token);
+                                DataService.saveDeviceToken(LoginActivity.this, CurrentDeviceToken);
                                 LoginActivity.this.startActivity(intent);
                             } else {
                                 Toast.makeText(LoginActivity.this, "Neuspešna prijava, poskusite ponovno!", Toast.LENGTH_SHORT).show();

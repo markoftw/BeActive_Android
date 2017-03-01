@@ -46,8 +46,23 @@ class DataService {
     static String JWTToken = null;
     static String DeviceToken = null;
     static String Username = null;
+    static String Device_Type = null;
     static ArrayList<ReviewList> myList = new ArrayList<>();
     static String SERVER_ADDRESS = "http://beactive.marefx.com";
+    private static final OkHttpClient client = new OkHttpClient();
+
+    static void saveDeviceType(Context context, String type) {
+        Device_Type = type;
+        SharedPreferences pref =  context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("device_type", type);
+        editor.apply();
+    }
+
+    static void getDeviceType(Context context) {
+        SharedPreferences pref = context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
+        Username = pref.getString("device_type", "");
+    }
 
     static void saveUsername(Context context, String username) {
         Username = username;
@@ -69,10 +84,12 @@ class DataService {
         context.startActivity(intent);
     }
 
-    static void logout(Context context) {
+    static void logout(final Context context) {
         SharedPreferences prefName = context.getSharedPreferences("userName", Context.MODE_PRIVATE);
         SharedPreferences prefToken = context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
         SharedPreferences prefDeviceToken = context.getSharedPreferences("deviceToken", Context.MODE_PRIVATE);
+        DeviceToken = prefToken.getString("token_device", "");
+        JWTToken = prefToken.getString("token", "");
         SharedPreferences.Editor editorName = prefName.edit();
         SharedPreferences.Editor editorToken = prefToken.edit();
         SharedPreferences.Editor editorDeviceToken = prefDeviceToken.edit();
@@ -80,9 +97,43 @@ class DataService {
         editorName.apply();
         editorToken.remove("token");
         editorToken.remove("token_device");
+        editorToken.remove("device_type");
         editorToken.apply();
         editorDeviceToken.remove("token");
         editorDeviceToken.apply();
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("device_token", DeviceToken)
+                .build();
+
+        final okhttp3.Request request = new okhttp3.Request.Builder()
+                .addHeader("Authorization", "Bearer " + JWTToken)
+                .url(SERVER_ADDRESS + "/api/user/delete/device")
+                .post(formBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Toast.makeText(context, "Napaka " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if (response.code() == 200) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response.body().string());
+                        boolean success = jsonResponse.has("success") ? jsonResponse.getBoolean("success") : false;
+                        if (success) {
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        });
 
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);

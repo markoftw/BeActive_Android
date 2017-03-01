@@ -113,7 +113,8 @@ public class UserActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().subscribeToTopic("test");
         DeviceToken = FirebaseInstanceId.getInstance().getToken();
         DataService.getToken(UserActivity.this);
-        checkIfSameToken();
+        DataService.getDeviceType(UserActivity.this);
+        //checkIfSameToken();
 
         Log.e("CurrDeviceToken", "current device token: " + DeviceToken);
         Log.e("CurrJWTToken", "current JWT token: " + DataService.JWTToken);
@@ -125,6 +126,10 @@ public class UserActivity extends AppCompatActivity {
         welcomeMsg = (TextView) findViewById(R.id.prijavljenKot);
         uploadImg = (ImageView) findViewById(R.id.imageToUpload);
         //uploadImg.setVisibility(View.GONE);
+
+        if(DataService.Device_Type.equals("Guest")) {
+            buttonReview.setVisibility(View.GONE);
+        }
 
         DataService.getUsername(UserActivity.this);
         welcomeMsg.setText("Prijavljeni kot " + DataService.Username);
@@ -175,32 +180,22 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
-    public void saveDeviceToken() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("deviceToken", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("token", DeviceToken);
-        editor.apply();
-    }
-
-    public void getDeviceToken() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("deviceToken", Context.MODE_PRIVATE);
-        DeviceToken = pref.getString("token", "");
-    }
 
     private void checkIfSameToken() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("deviceToken", Context.MODE_PRIVATE);
-        String token = pref.getString("token", "");
-        Log.e("checkTok", token);
-        if(token.equals(DeviceToken)) {
+        DataService.getDeviceToken(UserActivity.this);
+        Log.e("checkTok", DataService.DeviceToken);
+        if(DataService.DeviceToken.equals(DeviceToken)) {
             // Token is same, do nothing
             Log.e("userDeviceToken", "Token is the same");
         } else {
             // Update token in DB and SharedPreferences
             Log.e("userDeviceToken", "Token is NOT the same");
-            saveDeviceToken();
+            DataService.saveDeviceToken(UserActivity.this, DeviceToken);
+            //saveDeviceToken();
 
             RequestBody body = new FormBody.Builder()
                     .add("device_token", DeviceToken)
+                    .add("device_type", "Member")
                     .build();
 
             Request request = new Request.Builder()
