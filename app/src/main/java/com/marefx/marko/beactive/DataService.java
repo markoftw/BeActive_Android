@@ -61,7 +61,7 @@ class DataService {
 
     static void getDeviceType(Context context) {
         SharedPreferences pref = context.getSharedPreferences("userToken", Context.MODE_PRIVATE);
-        Username = pref.getString("device_type", "");
+        Device_Type = pref.getString("device_type", "");
     }
 
     static void saveUsername(Context context, String username) {

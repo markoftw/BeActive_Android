@@ -84,9 +84,11 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         // CHECK IF TOKEN EXISTS
         DataService.getToken(LoginActivity.this);
+        DataService.getDeviceType(LoginActivity.this);
         Log.e("token2", DataService.JWTToken);
         if(DataService.JWTToken != null && DataService.JWTToken.length() > 0) {
             RequestBody formBody = new FormBody.Builder()
+                    .add("status", DataService.Device_Type)
                     .build();
 
             final okhttp3.Request request = new okhttp3.Request.Builder()
