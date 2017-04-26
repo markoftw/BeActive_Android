@@ -24,7 +24,7 @@
         android:layout_below="@+id/textViewImageTitle"
         android:contentDescription="" />
 
-    <Button
+    <com.dd.processbutton.FlatButton
         android:text="@string/oceni"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,17 +36,17 @@
         android:layout_alignParentRight="true" />
 
     <TextView
-        android:text="@string/ni_akajo_ih_slik_za_odobritev"
+        android:id="@+id/textViewTItle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewTItle"
-        android:textAlignment="center"
-        android:layout_below="@+id/toolbar"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="10dp"
+        android:text="@string/ni_akajo_ih_slik_za_odobritev"
+        android:textAlignment="center" />
 
     <TextView
         android:layout_width="wrap_content"

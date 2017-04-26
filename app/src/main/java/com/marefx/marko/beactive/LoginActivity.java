@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                                 LoginActivity.this.runOnUiThread(new Runnable() {
                                     public void run() {
                                         DataService.logout(LoginActivity.this);
-                                        Toast.makeText(LoginActivity.this, "Ponovno se prijavite", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, "Seja potekla, ponovno se prijavite", Toast.LENGTH_SHORT).show();
                                         progressDialog.hide();
                                     }
                                 });

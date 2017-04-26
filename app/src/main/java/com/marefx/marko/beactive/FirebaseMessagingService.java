@@ -27,7 +27,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
-                .setPriority(5)
+                //.setPriority(5)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setWhen(System.currentTimeMillis())

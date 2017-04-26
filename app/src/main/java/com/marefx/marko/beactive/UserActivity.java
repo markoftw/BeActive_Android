@@ -73,6 +73,7 @@ public class UserActivity extends AppCompatActivity {
     Button uploadButton;
     //Button notifButton;
     Button buttonReview;
+    Button buttonLogout;
     ImageView uploadImg;
 
     String mCurrentPhotoPath;
@@ -125,6 +126,7 @@ public class UserActivity extends AppCompatActivity {
         buttonReview = (Button) findViewById(R.id.buttonReviews);
         welcomeMsg = (TextView) findViewById(R.id.prijavljenKot);
         uploadImg = (ImageView) findViewById(R.id.imageToUpload);
+        buttonLogout = (Button) findViewById(R.id.buttonLogout);
         //uploadImg.setVisibility(View.GONE);
 
         if(DataService.Device_Type.equals("Guest")) {
@@ -154,6 +156,14 @@ public class UserActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         Log.d("Ex_click_upload" , e.getMessage());
                     }
+                }
+            }
+        });
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == buttonLogout) {
+                    DataService.logout(UserActivity.this);
                 }
             }
         });
